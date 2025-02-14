@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'registration',
     'api',
     "rest_framework",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
