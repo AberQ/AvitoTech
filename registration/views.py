@@ -15,31 +15,41 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-        else:
-            # Проверяем, существует ли уже пользователь с таким email
-            email = request.data.get("email")
-            user = User.objects.filter(email=email).first()
-            if user is None:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                user = serializer.save()
+            else:
+                # Проверяем, есть ли уже пользователь с таким email
+                email = request.data.get("email")
+                user = User.objects.filter(email=email).first()
+                if user is None:
+                    return Response(
+                        {"detail": "Неверный запрос."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        # Создаем JWT токены
-        refresh = RefreshToken.for_user(user)
-        access = str(refresh.access_token)
+            # Создаем JWT токены
+            refresh = RefreshToken.for_user(user)
+            access = str(refresh.access_token)
 
-        return Response(
-            {
-                "user": {
-                    "id": user.id,
-                    "email": user.email,
+            return Response(
+                {
+                    "user": {
+                        "id": user.id,
+                        "email": user.email,
+                    },
+                    "access": access,
+                    "refresh": str(refresh),
                 },
-                "access": access,
-                "refresh": str(refresh),
-            },
-            status=status.HTTP_200_OK,
-        )
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception:
+            return Response(
+                {"detail": "Внутренняя ошибка сервера."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 
