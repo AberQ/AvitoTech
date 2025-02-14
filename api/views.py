@@ -34,30 +34,42 @@ class TransferCoinsView(generics.GenericAPIView):
             try:
                 sender.save()
                 recipient.save()
+                # Запись в историю транзакций (по email)
+                Transaction.objects.create(
+                    user=sender,
+                    transaction_type="transfer",
+                    amount=amount,
+                    sender_email=sender.email,
+                    recipient_email=recipient.email
+                )
             except Exception:
                 return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response({"description": "Успешный ответ!"}, status=status.HTTP_200_OK)
 
-        # В случае ошибки сериализации всегда возвращаем одинаковое сообщение
         return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    
+
+
 class PurchaseMerchAPIView(APIView):
     permission_classes = [IsAuthenticatedCustom]
 
     def get(self, request, merch_name):
         try:
-            # Передаем merch_name в контексте
             serializer = PurchaseMerchSerializer(data=request.data, context={"request": request, "merch_name": merch_name})
             if serializer.is_valid():
                 user_merch = serializer.save()
+                # Запись в историю транзакций (по email)
+                Transaction.objects.create(
+                    user=request.user,
+                    transaction_type="purchase",
+                    amount=user_merch.merch.price,
+                    sender_email=request.user.email,
+                    merch_name=user_merch.merch.name
+                )
                 return Response(
-                    {"description": f"Успешный ответ."},
+                    {"description": "Успешный ответ."},
                     status=status.HTTP_200_OK,
                 )
             return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            # В случае ошибки возвращаем сообщение о внутренней ошибке
+        except Exception:
             return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

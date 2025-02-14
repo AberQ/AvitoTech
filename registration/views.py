@@ -20,13 +20,15 @@ class RegisterView(generics.CreateAPIView):
             if serializer.is_valid():
                 user = serializer.save()
             else:
-                # Проверяем, есть ли уже пользователь с таким email
+                # Проверяем существование пользователя с таким email
                 email = request.data.get("email")
+                password = request.data.get("password")
+
                 user = User.objects.filter(email=email).first()
-                if user is None:
+                if user is None or not user.check_password(password):
                     return Response(
-                        {"description": "Неверный запрос."},
-                        status=status.HTTP_400_BAD_REQUEST,
+                        {"description": "Неавторизован."},
+                        status=status.HTTP_401_UNAUTHORIZED,
                     )
 
             # Создаем JWT токены
@@ -50,7 +52,6 @@ class RegisterView(generics.CreateAPIView):
                 {"description": "Внутренняя ошибка сервера."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
 
 
 class LogoutView(APIView):
