@@ -21,10 +21,11 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from api.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("user/", UserView.as_view(), name="user"),
     path("api/auth", RegisterView.as_view(), name="register"),
     
-    path('transfer-coins/', TransferCoinsView.as_view(), name='transfer-coins'),
+    path('api/sendCoin', TransferCoinsView.as_view(), name='transfer-coins'),
+    path("api/buy/<str:merch_name>", PurchaseMerchAPIView.as_view(), name="purchase_merch"),
 ]

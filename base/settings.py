@@ -132,8 +132,9 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    'EXCEPTION_HANDLER': 'base.utils.custom_exception_handler'
 }
-
+APPEND_SLASH = False
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),  # Время жизни access токена
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Время жизни refresh токена

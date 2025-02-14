@@ -25,7 +25,7 @@ class RegisterView(generics.CreateAPIView):
                 user = User.objects.filter(email=email).first()
                 if user is None:
                     return Response(
-                        {"detail": "Неверный запрос."},
+                        {"description": "Неверный запрос."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
@@ -47,7 +47,7 @@ class RegisterView(generics.CreateAPIView):
 
         except Exception:
             return Response(
-                {"detail": "Внутренняя ошибка сервера."},
+                {"description": "Внутренняя ошибка сервера."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
