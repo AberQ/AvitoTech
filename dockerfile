@@ -23,4 +23,4 @@ ENV DJANGO_SETTINGS_MODULE=base.settings
 ENV PYTHONUNBUFFERED 1
 
 # Запускаем команду для Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "base.wsgi:application"]
