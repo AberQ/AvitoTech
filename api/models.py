@@ -24,18 +24,13 @@ class UserMerch(models.Model):
     
     
 class Transaction(models.Model):
-    TRANSACTION_TYPES = [
-        ("transfer", "Transfer"),
-        ("purchase", "Purchase"),
-    ]
+
 
     user = models.ForeignKey("registration.CustomUser", on_delete=models.CASCADE, related_name="transactions")
-    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
     amount = models.PositiveIntegerField()
     sender_email = models.EmailField(null=True, blank=True)  # Отправитель (для перевода)
     recipient_email = models.EmailField(null=True, blank=True)  # Получатель (для перевода)
-    merch_name = models.CharField(max_length=255, null=True, blank=True)  # Название товара (для покупки)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.transaction_type} - {self.amount} coins"
+        return f"{self.amount} coins"

@@ -65,7 +65,7 @@ class UserMerchSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ("transaction_type", "amount", "sender_email", "recipient_email", "merch_name", "timestamp")
+        fields = ("amount", "sender_email", "recipient_email", "timestamp")
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

@@ -37,7 +37,6 @@ class TransferCoinsView(generics.GenericAPIView):
                 # Запись в историю транзакций (по email)
                 Transaction.objects.create(
                     user=sender,
-                    transaction_type="transfer",
                     amount=amount,
                     sender_email=sender.email,
                     recipient_email=recipient.email
@@ -58,14 +57,9 @@ class PurchaseMerchAPIView(APIView):
             serializer = PurchaseMerchSerializer(data=request.data, context={"request": request, "merch_name": merch_name})
             if serializer.is_valid():
                 user_merch = serializer.save()
-                # Запись в историю транзакций (по email)
-                Transaction.objects.create(
-                    user=request.user,
-                    transaction_type="purchase",
-                    amount=user_merch.merch.price,
-                    sender_email=request.user.email,
-                    merch_name=user_merch.merch.name
-                )
+                
+                # Убираем создание транзакции для покупки товара
+
                 return Response(
                     {"description": "Успешный ответ."},
                     status=status.HTTP_200_OK,
@@ -73,7 +67,7 @@ class PurchaseMerchAPIView(APIView):
             return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
         
         
 class UserInfoAPIView(APIView):
