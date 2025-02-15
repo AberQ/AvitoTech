@@ -7,8 +7,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password, make_password   
 from .serializers import RegisterSerializer, UserSerializer, CustomTokenObtainSerializer
 from django.db import transaction
+from django.contrib.auth.models import update_last_login
 User = get_user_model()
-
 
 class RegisterView(generics.CreateAPIView):
     def post(self, request):
@@ -19,18 +19,20 @@ class RegisterView(generics.CreateAPIView):
             if not username or not password:
                 return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
 
-            user_data = User.objects.filter(username=username).values("id", "username", "password", "coins").first()
+            user = User.objects.filter(username=username).first()
 
-            if user_data:
-                if not check_password(password, user_data["password"]):
+            if user:
+                if not check_password(password, user.password):
                     return Response({"description": "Неавторизован."}, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 hashed_password = make_password(password)
                 with transaction.atomic():
                     user = User.objects.create(username=username, password=hashed_password)
-                    user_data = {"id": user.id, "username": user.username, "coins": user.coins}
 
-            refresh = RefreshToken.for_user(User(id=user_data["id"]))  
+            
+            update_last_login(None, user)
+            refresh = RefreshToken.for_user(user)
+            
             return Response(
                 {
                     "access": str(refresh.access_token),
@@ -38,8 +40,5 @@ class RegisterView(generics.CreateAPIView):
                 },
                 status=status.HTTP_200_OK,
             )
-        
-        except Exception as e:
+        except Exception:
             return Response({"description": "Внутренняя ошибка сервера"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
