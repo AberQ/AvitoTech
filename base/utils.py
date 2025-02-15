@@ -1,11 +1,11 @@
 from django.core.exceptions import PermissionDenied
 from django.db import connections
 from django.http import Http404
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
 from rest_framework.permissions import BasePermission
 from rest_framework import exceptions
 from rest_framework.response import Response
-
+from rest_framework_simplejwt.exceptions import InvalidToken
 
 
 def set_rollback():
@@ -15,18 +15,16 @@ def set_rollback():
 
 def custom_exception_handler(exc, context):
     """
-    Returns the response that should be used for any given exception.
-
-    By default we handle the REST framework `APIException`, and also
-    Django's built-in `Http404` and `PermissionDenied` exceptions.
-
-    Any unhandled exceptions may return `None`, which will cause a 500 error
-    to be raised.
+    Кастомный обработчик исключений.
     """
     if isinstance(exc, Http404):
         exc = exceptions.NotFound(*(exc.args))
     elif isinstance(exc, PermissionDenied):
         exc = exceptions.PermissionDenied(*(exc.args))
+
+    # Обрабатываем ошибку неверного или просроченного токена
+    if isinstance(exc, (InvalidToken, AuthenticationFailed, NotAuthenticated)):
+        return Response({"description": "Неавторизован"}, status=401)
 
     if isinstance(exc, exceptions.APIException):
         headers = {}
