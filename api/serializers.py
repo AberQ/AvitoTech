@@ -70,7 +70,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class UserInfoSerializer(serializers.ModelSerializer):
     inventory = serializers.SerializerMethodField()
-    transactions = TransactionSerializer(many=True)
+    transactions = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
@@ -81,3 +81,13 @@ class UserInfoSerializer(serializers.ModelSerializer):
         return {
             "items": UserMerchSerializer(user_merch, many=True).data
         }
+
+    def get_transactions(self, obj):
+        # Получаем все транзакции, где пользователь является отправителем или получателем
+        sent_transactions = Transaction.objects.filter(sender_email=obj.email)
+        received_transactions = Transaction.objects.filter(recipient_email=obj.email)
+        
+        # Объединяем их
+        transactions = sent_transactions.union(received_transactions).order_by('-timestamp')  # Сортируем по времени
+        
+        return TransactionSerializer(transactions, many=True).data
