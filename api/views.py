@@ -70,11 +70,15 @@ class PurchaseMerchAPIView(APIView):
 
 
 
-class UserInfoAPIView(APIView):
+class UserInfoAPIView(APIView): 
     permission_classes = [IsAuthenticatedCustom]
 
     def get(self, request):
-      
-        user = request.user
-        serializer = UserInfoSerializer(user)
-        return Response(serializer.data)
+        try:
+            user = request.user
+            serializer = UserInfoSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except AuthenticationFailed:
+            return Response({"error": "Неавторизован"}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({"error": f"Внутренняя ошибка сервера: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
