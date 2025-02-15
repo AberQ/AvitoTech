@@ -30,7 +30,7 @@ class RegisterView(generics.CreateAPIView):
                     user = User.objects.create(username=username, password=hashed_password)
                     user_data = {"id": user.id, "username": user.username, "coins": user.coins}
 
-            refresh = RefreshToken.for_user(User(id=user_data["id"]))  # Создаем токен без загрузки объекта из БД
+            refresh = RefreshToken.for_user(User(id=user_data["id"]))  
             return Response(
                 {
                     "access": str(refresh.access_token),

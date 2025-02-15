@@ -10,7 +10,7 @@ User = get_user_model()
 class RegisterViewTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.url = "http://127.0.0.1:8080/api/auth"  # Укажи реальный путь к API
+        self.url = "http://127.0.0.1:8080/api/auth"  
         self.user_data = {
             "username": "testuser",
             "password": "securepassword"

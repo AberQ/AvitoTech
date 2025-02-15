@@ -74,7 +74,7 @@ class UserInfoAPIView(APIView):
     permission_classes = [IsAuthenticatedCustom]
 
     def get(self, request):
-        # Если токен не передан, то будет вызван `PermissionDenied` с кастомным сообщением
+      
         user = request.user
         serializer = UserInfoSerializer(user)
         return Response(serializer.data)

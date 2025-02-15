@@ -1,13 +1,10 @@
 import os
 import django
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'base.settings')  
 django.setup()
 
-
 from api.models import Merch
-
 
 items = [
     ("t-shirt", 80),
@@ -22,8 +19,12 @@ items = [
     ("pink-hoody", 500),
 ]
 
-
 for name, price in items:
-    Merch.objects.create(name=name, price=price)
+    # Проверяем, существует ли товар с таким же названием и ценой
+    merch, created = Merch.objects.get_or_create(name=name, price=price)
+    if created:
+        print(f"Объект '{name}' с ценой {price} успешно создан!")
+    else:
+        print(f"Объект '{name}' с ценой {price} уже существует!")
 
-print("Объекты созданы успешно!")
+print("Процесс завершен.")

@@ -32,7 +32,7 @@ class TransactionAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-# Регистрация моделей в админке
+
 admin.site.register(Merch, MerchAdmin)
 admin.site.register(UserMerch, UserMerchAdmin)
 admin.site.register(Transaction, TransactionAdmin)

@@ -32,7 +32,7 @@ class UserInfoAPITest(APITestCase):
         expected_data = {
             "username": self.user.username,
             "coins": self.user.coins,
-            "inventory": [],  # Если у тебя есть товар, добавь в setUp()
+            "inventory": [],
             "coin_history": {
                 "sent": [{"toUser": "otheruser", "amount": 10}],
                 "received": [{"fromUser": "otheruser", "amount": 5}]
