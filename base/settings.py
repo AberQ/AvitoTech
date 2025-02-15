@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'base.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "JobSite",
+        "NAME": "AvitoTech",
         "USER": "postgres",
         "PASSWORD": "123",
         "HOST": "db",  # Если хочешь взаимодействовать через Docker то надо ставить 'db', а если через тестовый сервер django, то 'localhost'
@@ -107,7 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+]
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 

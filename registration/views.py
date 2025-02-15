@@ -4,66 +4,40 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password, make_password   
 from .serializers import RegisterSerializer, UserSerializer, CustomTokenObtainSerializer
-
+from django.db import transaction
 User = get_user_model()
 
 
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = RegisterSerializer
-    permission_classes = [permissions.AllowAny]
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
 
-    def create(self, request, *args, **kwargs):
-        try:
-          
-            username = request.data.get("username")
-            password = request.data.get("password")
+        if not username or not password:
+            return Response({"error": "Username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-          
-            user = User.objects.filter(username=username).first()
+        user_data = User.objects.filter(username=username).values("id", "username", "password", "coins").first()
 
-            if user:
-               
-                if not user.check_password(password):
-                    return Response(
-                        {"description": "Неавторизован."},
-                        status=status.HTTP_401_UNAUTHORIZED,
-                    )
-            else:
-              
-                serializer = self.get_serializer(data=request.data)
+        if user_data:
+            if not check_password(password, user_data["password"]):
+                return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            hashed_password = make_password(password)
+            with transaction.atomic():
+                user = User.objects.create(username=username, password=hashed_password)
+                user_data = {"id": user.id, "username": user.username, "coins": user.coins}
 
-               
-                if serializer.is_valid():
-                    user = serializer.save()  
-                else:
-                    return Response(
-                        {"description": "Неверный запрос."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-
-    
-            refresh = RefreshToken.for_user(user)
-            access = str(refresh.access_token)
-
-            return Response(
-                {
-                    "user": {
-                        "id": user.id,
-                        "username": user.username,
-                    },
-                    "access": access,
-                    "refresh": str(refresh),
-                },
-                status=status.HTTP_200_OK if user else status.HTTP_201_CREATED,
-            )
-
-        except Exception as e:
-            return Response(
-                {"description": f"Внутренняя ошибка сервера."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        refresh = RefreshToken.for_user(User(id=user_data["id"]))  # Создаем токен без загрузки объекта из БД
+        return Response(
+            {
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "user": user_data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 

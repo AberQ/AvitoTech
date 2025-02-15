@@ -24,7 +24,7 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_DB: JobSite
+      POSTGRES_DB: AvitoTech
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
     ports:
