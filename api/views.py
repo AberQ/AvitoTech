@@ -24,7 +24,7 @@ class TransferCoinsView(generics.GenericAPIView):
             try:
                 recipient = CustomUser.objects.get(username=recipient_username)  
             except CustomUser.DoesNotExist:
-                return Response({"description": "Неверный запрос."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
             except Exception:
                 return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -71,18 +71,10 @@ class PurchaseMerchAPIView(APIView):
 
 
 class UserInfoAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustom]
 
     def get(self, request):
-        user = request.user
-        serializer = UserInfoSerializer(user)
-        return Response(serializer.data)
-        
-        
-class UserInfoAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
+        # Если токен не передан, то будет вызван `PermissionDenied` с кастомным сообщением
         user = request.user
         serializer = UserInfoSerializer(user)
         return Response(serializer.data)
