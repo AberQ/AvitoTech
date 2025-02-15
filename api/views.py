@@ -73,3 +73,13 @@ class PurchaseMerchAPIView(APIView):
             return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+        
+class UserInfoAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserInfoSerializer(user)
+        return Response(serializer.data)

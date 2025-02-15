@@ -28,4 +28,7 @@ urlpatterns = [
     
     path('api/sendCoin', TransferCoinsView.as_view(), name='transfer-coins'),
     path("api/buy/<str:merch_name>", PurchaseMerchAPIView.as_view(), name="purchase_merch"),
+    
+    
+    path("api/info", UserInfoAPIView.as_view(), name="user-info"),
 ]

@@ -51,3 +51,33 @@ class PurchaseMerchSerializer(serializers.Serializer):
             user_merch.save()
 
         return user_merch
+    
+    
+    
+class UserMerchSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='merch.name')  # Меняем 'merch_name' на 'type'
+
+    class Meta:
+        model = UserMerch
+        fields = ['type', 'quantity']
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ("transaction_type", "amount", "sender_email", "recipient_email", "merch_name", "timestamp")
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    inventory = serializers.SerializerMethodField()
+    transactions = TransactionSerializer(many=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ("email", "coins", "inventory", "transactions")
+
+    def get_inventory(self, obj):
+        user_merch = obj.owned_merch.all()
+        return {
+            "items": UserMerchSerializer(user_merch, many=True).data
+        }
