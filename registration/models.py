@@ -7,17 +7,17 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError("Пользователь должен указать адрес электронной почты.")
-        email = self.normalize_email(email)
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError("Пользователь должен указать имя пользователя.")
+        username = self.model.normalize_username(username)  # Если хотите нормализовать username
         extra_fields.setdefault("coins", 1000)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(self, username, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("coins", 1000)
@@ -27,12 +27,12 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Суперпользователь должен иметь is_superuser=True.")
 
-        user = self.create_user(email, password, **extra_fields)
+        user = self.create_user(username, password, **extra_fields)
         return user
 
 
 class CustomAbstractUser(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField("email address", unique=True)
+    username = models.CharField("username", unique=True, max_length=150)
     is_staff = models.BooleanField(
         "staff status",
         default=False,
@@ -48,16 +48,15 @@ class CustomAbstractUser(AbstractBaseUser, PermissionsMixin):
     coins = models.PositiveIntegerField(default=1000, help_text="User's coin balance.")
 
     objects = CustomUserManager()
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "username"  # Поменяйте на username
+    REQUIRED_FIELDS = []  # Уберите email из обязательных полей
 
     class Meta:
         verbose_name = "Авторизационник"
         verbose_name_plural = "Авторизационники"
         abstract = True
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+
 
 
 class CustomUser(CustomAbstractUser):

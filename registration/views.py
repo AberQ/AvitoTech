@@ -16,19 +16,31 @@ class RegisterView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
-            if serializer.is_valid():
-                user = serializer.save()
-            else:
-                # Проверяем существование пользователя с таким email
-                email = request.data.get("email")
-                password = request.data.get("password")
+            # Извлекаем данные из запроса
+            username = request.data.get("username")
+            password = request.data.get("password")
 
-                user = User.objects.filter(email=email).first()
-                if user is None or not user.check_password(password):
+            # Проверяем, существует ли пользователь с таким username
+            user = User.objects.filter(username=username).first()
+
+            if user:
+                # Если пользователь существует, проверяем пароль
+                if not user.check_password(password):
                     return Response(
-                        {"description": "Неавторизован."},
+                        {"description": "Неверный пароль."},
                         status=status.HTTP_401_UNAUTHORIZED,
+                    )
+            else:
+                # Если пользователя нет, проверяем данные через сериализатор
+                serializer = self.get_serializer(data=request.data)
+
+                # Проверяем, что данные валидны
+                if serializer.is_valid():
+                    user = serializer.save()  # Сохраняем нового пользователя
+                else:
+                    return Response(
+                        {"description": "Некорректные данные."},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
 
             # Создаем JWT токены
@@ -39,20 +51,19 @@ class RegisterView(generics.CreateAPIView):
                 {
                     "user": {
                         "id": user.id,
-                        "email": user.email,
+                        "username": user.username,
                     },
                     "access": access,
                     "refresh": str(refresh),
                 },
-                status=status.HTTP_200_OK,
+                status=status.HTTP_200_OK if user else status.HTTP_201_CREATED,
             )
 
-        except Exception:
+        except Exception as e:
             return Response(
-                {"description": "Внутренняя ошибка сервера."},
+                {"description": f"Внутренняя ошибка сервера: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]

@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from registration.models import CustomUser
 from .models import *
+# TransferCoinsSerializer
 class TransferCoinsSerializer(serializers.Serializer):
-    toUser = serializers.EmailField()  # Переименовываем поле в toUser
+    toUser = serializers.CharField()  # Переименовываем поле в toUser (для username)
     amount = serializers.IntegerField(min_value=1)
 
     def validate_amount(self, value):
@@ -12,15 +13,16 @@ class TransferCoinsSerializer(serializers.Serializer):
 
     def validate_toUser(self, value):
         try:
-            recipient = CustomUser.objects.get(email=value)
+            recipient = CustomUser.objects.get(username=value)  # Используем username
         except CustomUser.DoesNotExist:
-            raise serializers.ValidationError("Пользователь с таким email не найден.")
+            raise serializers.ValidationError("Пользователь с таким username не найден.")
         return value
+        
 
-    
+# PurchaseMerchSerializer
 class PurchaseMerchSerializer(serializers.Serializer):
     def validate(self, attrs):
-        merch_name = self.context["merch_name"]  # Извлекаем merch_name из контекста
+        merch_name = self.context["merch_name"]  
         user = self.context["request"].user
         try:
             merch = Merch.objects.get(name=merch_name)
@@ -51,45 +53,38 @@ class PurchaseMerchSerializer(serializers.Serializer):
             user_merch.save()
 
         return user_merch
-    
-    
-    
-class UserMerchSerializer(serializers.ModelSerializer):
-    type = serializers.CharField(source='merch.name')  # Меняем 'merch_name' на 'type'
-
-    class Meta:
-        model = UserMerch
-        fields = ['type', 'quantity']
 
 
+# TransactionSerializer
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ("amount", "sender_email", "recipient_email", "timestamp")
+        fields = ("amount", "sender_username", "recipient_username", "timestamp")  # Переименовали поля
 
 
+# UserInfoSerializer
 class UserInfoSerializer(serializers.ModelSerializer):
     inventory = serializers.SerializerMethodField()
     coin_history = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ("email", "coins", "inventory", "coin_history")
+        fields = ("username", "coins", "inventory", "coin_history")  # Поменяли email на username
 
     def get_inventory(self, obj):
         # Получаем все товары, которыми владеет пользователь
         user_merch = obj.owned_merch.all()
-        return UserMerchSerializer(user_merch, many=True).data  # Здесь нет вложенного списка "items"
+        return UserMerchSerializer(user_merch, many=True).data
 
     def get_coin_history(self, obj):
         # Получаем все транзакции, где пользователь является отправителем или получателем
-        sent_transactions = Transaction.objects.filter(sender_email=obj.email)
-        received_transactions = Transaction.objects.filter(recipient_email=obj.email)
+        sent_transactions = Transaction.objects.filter(sender_username=obj.username)  # Изменили на username
+        received_transactions = Transaction.objects.filter(recipient_username=obj.username)  # Изменили на username
         
         # Формируем список отправленных транзакций
         sent = [
             {
-                "toUser": transaction.recipient_email,
+                "toUser": transaction.recipient_username,  # Изменили на username
                 "amount": transaction.amount
             }
             for transaction in sent_transactions
@@ -98,7 +93,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
         # Формируем список полученных транзакций
         received = [
             {
-                "fromUser": transaction.sender_email,
+                "fromUser": transaction.sender_username,  # Изменили на username
                 "amount": transaction.amount
             }
             for transaction in received_transactions
@@ -108,3 +103,15 @@ class UserInfoSerializer(serializers.ModelSerializer):
             "received": received,
             "sent": sent
         }
+
+        
+        
+        
+        
+        
+class UserMerchSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='merch.name')  # Меняем 'merch_name' на 'type'
+
+    class Meta:
+        model = UserMerch
+        fields = ['type', 'quantity']
