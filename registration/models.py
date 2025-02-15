@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError("Пользователь должен указать имя пользователя.")
-        username = self.model.normalize_username(username)  # Если хотите нормализовать username
+        username = self.model.normalize_username(username)  
         extra_fields.setdefault("coins", 1000)
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
@@ -48,8 +48,8 @@ class CustomAbstractUser(AbstractBaseUser, PermissionsMixin):
     coins = models.PositiveIntegerField(default=1000, help_text="User's coin balance.")
 
     objects = CustomUserManager()
-    USERNAME_FIELD = "username"  # Поменяйте на username
-    REQUIRED_FIELDS = []  # Уберите email из обязательных полей
+    USERNAME_FIELD = "username" 
+    REQUIRED_FIELDS = []  
 
     class Meta:
         verbose_name = "Авторизационник"

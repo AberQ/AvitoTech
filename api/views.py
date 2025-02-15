@@ -13,33 +13,33 @@ class TransferCoinsView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            sender = request.user  # Текущий пользователь (отправитель)
-            recipient_username = serializer.validated_data['toUser']  # Получаем новое имя поля
+            sender = request.user  
+            recipient_username = serializer.validated_data['toUser']  
             amount = serializer.validated_data['amount']
 
             if sender.coins < amount:
                 return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                recipient = CustomUser.objects.get(username=recipient_username)  # Используем username
+                recipient = CustomUser.objects.get(username=recipient_username)  
             except CustomUser.DoesNotExist:
                 return Response({"description": "Получатель не найден."}, status=status.HTTP_404_NOT_FOUND)
             except Exception:
                 return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # Перевод монет
+            
             sender.coins -= amount
             recipient.coins += amount
 
             try:
                 sender.save()
                 recipient.save()
-                # Запись в историю транзакций
+                
                 Transaction.objects.create(
                     user=sender,
                     amount=amount,
-                    sender_username=sender.username,  # Используем username
-                    recipient_username=recipient.username  # Используем username
+                    sender_username=sender.username,  
+                    recipient_username=recipient.username  
                 )
             except Exception:
                 return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -49,7 +49,7 @@ class TransferCoinsView(generics.GenericAPIView):
         return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# PurchaseMerchAPIView
+
 class PurchaseMerchAPIView(APIView):
     permission_classes = [IsAuthenticatedCustom]
 
@@ -68,7 +68,7 @@ class PurchaseMerchAPIView(APIView):
             return Response({"description": "Внутренняя ошибка сервера."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# UserInfoAPIView
+
 class UserInfoAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

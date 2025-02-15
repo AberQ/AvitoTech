@@ -136,8 +136,8 @@ REST_FRAMEWORK = {
 }
 APPEND_SLASH = False
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),  # Время жизни access токена
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Время жизни refresh токена
-    "ROTATE_REFRESH_TOKENS": False,  # Если True, будет генерироваться новый refresh token при каждом обновлении
-    "BLACKLIST_AFTER_ROTATION": True,  # Если True, предыдущий refresh token будет помещен в черный список
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1), 
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  
+    "ROTATE_REFRESH_TOKENS": False,  
+    "BLACKLIST_AFTER_ROTATION": True,  
 }

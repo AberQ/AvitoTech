@@ -3,30 +3,30 @@ from .models import Merch, UserMerch, Transaction
 
 
 class MerchAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price')  # отображение в списке
-    search_fields = ('name',)  # поиск по названию товара
-    ordering = ('name',)  # сортировка по имени товара
-    list_filter = ('price',)  # фильтрация по цене товара
+    list_display = ('name', 'price') 
+    search_fields = ('name',) 
+    ordering = ('name',)  
+    list_filter = ('price',) 
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
 
 
 class UserMerchAdmin(admin.ModelAdmin):
-    list_display = ('user', 'merch', 'quantity', 'acquired_at')  # отображение в списке
-    search_fields = ('user__username', 'merch__name')  # поиск по пользователю и товару
-    list_filter = ('acquired_at',)  # фильтрация по времени получения товара
-    raw_id_fields = ('user', 'merch')  # улучшение производительности, если у пользователя много товаров
+    list_display = ('user', 'merch', 'quantity', 'acquired_at')  
+    search_fields = ('user__username', 'merch__name')  
+    list_filter = ('acquired_at',)  
+    raw_id_fields = ('user', 'merch')  
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'amount', 'sender_username', 'recipient_username', 'timestamp')  # отображение в списке
-    search_fields = ('user__username', 'sender_username', 'recipient_username')  # поиск по пользователю и отправителям/получателям
-    list_filter = ('timestamp',)  # фильтрация по времени транзакции
-    ordering = ('-timestamp',)  # сортировка по времени транзакции (по убыванию)
+    list_display = ('user', 'amount', 'sender_username', 'recipient_username', 'timestamp')  
+    search_fields = ('user__username', 'sender_username', 'recipient_username')  
+    list_filter = ('timestamp',) 
+    ordering = ('-timestamp',)  
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

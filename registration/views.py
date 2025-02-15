@@ -16,34 +16,34 @@ class RegisterView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            # Извлекаем данные из запроса
+          
             username = request.data.get("username")
             password = request.data.get("password")
 
-            # Проверяем, существует ли пользователь с таким username
+          
             user = User.objects.filter(username=username).first()
 
             if user:
-                # Если пользователь существует, проверяем пароль
+               
                 if not user.check_password(password):
                     return Response(
-                        {"description": "Неверный пароль."},
+                        {"description": "Неавторизован."},
                         status=status.HTTP_401_UNAUTHORIZED,
                     )
             else:
-                # Если пользователя нет, проверяем данные через сериализатор
+              
                 serializer = self.get_serializer(data=request.data)
 
-                # Проверяем, что данные валидны
+               
                 if serializer.is_valid():
-                    user = serializer.save()  # Сохраняем нового пользователя
+                    user = serializer.save()  
                 else:
                     return Response(
-                        {"description": "Некорректные данные."},
+                        {"description": "Неверный запрос."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-            # Создаем JWT токены
+    
             refresh = RefreshToken.for_user(user)
             access = str(refresh.access_token)
 
@@ -61,21 +61,10 @@ class RegisterView(generics.CreateAPIView):
 
         except Exception as e:
             return Response(
-                {"description": f"Внутренняя ошибка сервера: {str(e)}"},
+                {"description": f"Внутренняя ошибка сервера."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-class LogoutView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request):
-        try:
-            refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()  # Добавь `rest_framework_simplejwt.token_blacklist` в `INSTALLED_APPS`
-            return Response({"message": "Вы вышли из системы"}, status=200)
-        except Exception as e:
-            return Response({"error": str(e)}, status=400)
 
 
 class UserView(APIView):
