@@ -77,10 +77,9 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = ("email", "coins", "inventory", "coin_history")
 
     def get_inventory(self, obj):
+        # Получаем все товары, которыми владеет пользователь
         user_merch = obj.owned_merch.all()
-        return {
-            "items": UserMerchSerializer(user_merch, many=True).data
-        }
+        return UserMerchSerializer(user_merch, many=True).data  # Здесь нет вложенного списка "items"
 
     def get_coin_history(self, obj):
         # Получаем все транзакции, где пользователь является отправителем или получателем
