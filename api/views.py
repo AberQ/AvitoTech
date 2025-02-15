@@ -14,7 +14,7 @@ class TransferCoinsView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             sender = request.user  # Текущий пользователь (отправитель)
-            recipient_email = serializer.validated_data['recipient_email']
+            recipient_email = serializer.validated_data['toUser']  # Получаем новое имя поля
             amount = serializer.validated_data['amount']
 
             if sender.coins < amount:
@@ -47,6 +47,7 @@ class TransferCoinsView(generics.GenericAPIView):
             return Response({"description": "Успешный ответ!"}, status=status.HTTP_200_OK)
 
         return Response({"description": "Неверный запрос."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class PurchaseMerchAPIView(APIView):

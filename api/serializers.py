@@ -2,7 +2,7 @@ from rest_framework import serializers
 from registration.models import CustomUser
 from .models import *
 class TransferCoinsSerializer(serializers.Serializer):
-    recipient_email = serializers.EmailField()
+    toUser = serializers.EmailField()  # Переименовываем поле в toUser
     amount = serializers.IntegerField(min_value=1)
 
     def validate_amount(self, value):
@@ -10,13 +10,13 @@ class TransferCoinsSerializer(serializers.Serializer):
             raise serializers.ValidationError("Количество монет должно быть положительным числом.")
         return value
 
-    def validate_recipient_email(self, value):
+    def validate_toUser(self, value):
         try:
             recipient = CustomUser.objects.get(email=value)
         except CustomUser.DoesNotExist:
             raise serializers.ValidationError("Пользователь с таким email не найден.")
         return value
-    
+
     
 class PurchaseMerchSerializer(serializers.Serializer):
     def validate(self, attrs):
@@ -70,11 +70,11 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class UserInfoSerializer(serializers.ModelSerializer):
     inventory = serializers.SerializerMethodField()
-    transactions = serializers.SerializerMethodField()
+    coin_history = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ("email", "coins", "inventory", "transactions")
+        fields = ("email", "coins", "inventory", "coin_history")
 
     def get_inventory(self, obj):
         user_merch = obj.owned_merch.all()
@@ -82,12 +82,30 @@ class UserInfoSerializer(serializers.ModelSerializer):
             "items": UserMerchSerializer(user_merch, many=True).data
         }
 
-    def get_transactions(self, obj):
+    def get_coin_history(self, obj):
         # Получаем все транзакции, где пользователь является отправителем или получателем
         sent_transactions = Transaction.objects.filter(sender_email=obj.email)
         received_transactions = Transaction.objects.filter(recipient_email=obj.email)
         
-        # Объединяем их
-        transactions = sent_transactions.union(received_transactions).order_by('-timestamp')  # Сортируем по времени
+        # Формируем список отправленных транзакций
+        sent = [
+            {
+                "toUser": transaction.recipient_email,
+                "amount": transaction.amount
+            }
+            for transaction in sent_transactions
+        ]
         
-        return TransactionSerializer(transactions, many=True).data
+        # Формируем список полученных транзакций
+        received = [
+            {
+                "fromUser": transaction.sender_email,
+                "amount": transaction.amount
+            }
+            for transaction in received_transactions
+        ]
+        
+        return {
+            "received": received,
+            "sent": sent
+        }
