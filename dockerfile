@@ -23,4 +23,4 @@ ENV DJANGO_SETTINGS_MODULE=base.settings
 ENV PYTHONUNBUFFERED 1
 
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "base.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "-w", "12", "--threads", "2", "base.wsgi:application"]
