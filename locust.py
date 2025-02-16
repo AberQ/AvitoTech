@@ -3,7 +3,7 @@ from locust import HttpUser, task, between
 class LoadTestUser(HttpUser):
     wait_time = between(1, 2)  
     headers = {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5NjkwNDcwLCJpYXQiOjE3Mzk2ODk4NzAsImp0aSI6ImVlYzNlMjljZjJmNzRmYThiZTY4MDUyZjc2YmNmMWEzIiwidXNlcl9pZCI6M30.x6SN2GCdEsktDxsSSzVrUWB-l_9qss1OnGrgZFlTSts"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM5NzE4ODQxLCJpYXQiOjE3Mzk3MTgyNDEsImp0aSI6IjhkNTA4N2NiZDc1NzQyMWY4ZjM4NzY1YWM5NTU0N2VhIiwidXNlcl9pZCI6NX0.LMTd48EneSpjbbQKm30LJvJupXwxRzJuKOHXYnHjoRo"
     }
 
     @task
