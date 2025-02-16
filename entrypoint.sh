@@ -5,7 +5,7 @@ python manage.py migrate
 
 echo "Starting the server..."
 
-gunicorn -w 12 --threads 1 --bind 0.0.0.0:8080 base.wsgi:application &
+gunicorn -w 23 --threads 1 --bind 0.0.0.0:8080 base.wsgi:application &
 server_pid=$!
 
 
