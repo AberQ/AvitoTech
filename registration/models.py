@@ -32,7 +32,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomAbstractUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField("username", unique=True, max_length=150)
+    username = models.CharField("username", unique=True, max_length=150, db_index=True)
     is_staff = models.BooleanField(
         "staff status",
         default=False,
@@ -45,7 +45,7 @@ class CustomAbstractUser(AbstractBaseUser, PermissionsMixin):
                   "Unselect this instead of deleting accounts.",
     )
     date_joined = models.DateTimeField("date joined", default=timezone.now)
-    coins = models.PositiveIntegerField(default=1000, help_text="User's coin balance.")
+    coins = models.PositiveIntegerField(default=1000, help_text="User's coin balance.", db_index=True)
 
     objects = CustomUserManager()
     USERNAME_FIELD = "username" 
