@@ -1,13 +1,15 @@
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import check_password, make_password   
-from .serializers import RegisterSerializer, UserSerializer, CustomTokenObtainSerializer
-from django.db import transaction
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import update_last_login
+from django.db import transaction
+from rest_framework import generics, status
+from rest_framework.response import Response
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+
+
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):

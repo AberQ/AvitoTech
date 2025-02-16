@@ -1,9 +1,9 @@
 from django.core.exceptions import PermissionDenied
 from django.db import connections
 from django.http import Http404
+from rest_framework import exceptions
 from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
 from rest_framework.permissions import BasePermission
-from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import InvalidToken
 

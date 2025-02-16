@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Merch, UserMerch, Transaction
+
+from .models import Merch, Transaction, UserMerch
 
 
 class MerchAdmin(admin.ModelAdmin):

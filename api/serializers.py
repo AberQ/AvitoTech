@@ -1,6 +1,9 @@
 from rest_framework import serializers
+
 from registration.models import CustomUser
+
 from .models import *
+
 
 class TransferCoinsSerializer(serializers.Serializer):
     toUser = serializers.CharField() 

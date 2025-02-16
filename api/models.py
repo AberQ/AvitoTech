@@ -1,5 +1,7 @@
 from django.db import models
+
 from registration.models import *
+
 
 class Merch(models.Model):
     name = models.CharField(max_length=255, db_index=True, unique=True)

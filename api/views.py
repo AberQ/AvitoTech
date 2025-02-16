@@ -1,10 +1,12 @@
-from rest_framework import status, generics
+from rest_framework import generics, status
 from rest_framework.response import Response
-from registration.models import CustomUser
-from .serializers import *
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+
 from base.utils import *
+from registration.models import CustomUser
+
+from .serializers import *
+
 
 class TransferCoinsView(generics.GenericAPIView):
     serializer_class = TransferCoinsSerializer
