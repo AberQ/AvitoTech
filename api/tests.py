@@ -9,16 +9,31 @@ from api.models import Transaction
 
 User = get_user_model()
 
+
 class UserInfoAPITest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="testpassword", coins=100)
-        self.other_user = User.objects.create_user(username="otheruser", password="testpassword", coins=50)
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword", coins=100
+        )
+        self.other_user = User.objects.create_user(
+            username="otheruser", password="testpassword", coins=50
+        )
         self.client.force_authenticate(user=self.user)
         self.url = reverse("user-info")  # Укажи правильное имя URL
 
         # Создаем тестовые транзакции
-        Transaction.objects.create(user=self.user, amount=10, sender_username=self.user.username, recipient_username=self.other_user.username)
-        Transaction.objects.create(user=self.other_user, amount=5, sender_username=self.other_user.username, recipient_username=self.user.username)
+        Transaction.objects.create(
+            user=self.user,
+            amount=10,
+            sender_username=self.user.username,
+            recipient_username=self.other_user.username,
+        )
+        Transaction.objects.create(
+            user=self.other_user,
+            amount=5,
+            sender_username=self.other_user.username,
+            recipient_username=self.user.username,
+        )
 
     def test_authentication_required(self):
         """Тестирует, что без авторизации доступ запрещен"""
@@ -37,8 +52,8 @@ class UserInfoAPITest(APITestCase):
             "inventory": [],
             "coin_history": {
                 "sent": [{"toUser": "otheruser", "amount": 10}],
-                "received": [{"fromUser": "otheruser", "amount": 5}]
-            }
+                "received": [{"fromUser": "otheruser", "amount": 5}],
+            },
         }
         self.assertEqual(response.json(), expected_data)
 

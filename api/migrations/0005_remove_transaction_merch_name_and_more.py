@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0004_rename_created_at_transaction_timestamp_and_more'),
+        ("api", "0004_rename_created_at_transaction_timestamp_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='transaction',
-            name='merch_name',
+            model_name="transaction",
+            name="merch_name",
         ),
         migrations.RemoveField(
-            model_name='transaction',
-            name='transaction_type',
+            model_name="transaction",
+            name="transaction_type",
         ),
     ]

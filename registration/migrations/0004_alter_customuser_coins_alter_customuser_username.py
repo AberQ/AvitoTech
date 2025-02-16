@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0003_remove_customuser_email_customuser_username'),
+        ("registration", "0003_remove_customuser_email_customuser_username"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='coins',
-            field=models.PositiveIntegerField(db_index=True, default=1000, help_text="User's coin balance."),
+            model_name="customuser",
+            name="coins",
+            field=models.PositiveIntegerField(
+                db_index=True, default=1000, help_text="User's coin balance."
+            ),
         ),
         migrations.AlterField(
-            model_name='customuser',
-            name='username',
-            field=models.CharField(db_index=True, max_length=150, unique=True, verbose_name='username'),
+            model_name="customuser",
+            name="username",
+            field=models.CharField(
+                db_index=True, max_length=150, unique=True, verbose_name="username"
+            ),
         ),
     ]

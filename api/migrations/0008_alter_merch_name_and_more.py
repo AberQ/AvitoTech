@@ -6,23 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0007_alter_transaction_recipient_username_and_more'),
+        ("api", "0007_alter_transaction_recipient_username_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='merch',
-            name='name',
+            model_name="merch",
+            name="name",
             field=models.CharField(db_index=True, max_length=255, unique=True),
         ),
         migrations.AlterField(
-            model_name='transaction',
-            name='recipient_username',
-            field=models.CharField(blank=True, db_index=True, max_length=150, null=True),
+            model_name="transaction",
+            name="recipient_username",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=150, null=True
+            ),
         ),
         migrations.AlterField(
-            model_name='transaction',
-            name='sender_username',
-            field=models.CharField(blank=True, db_index=True, max_length=150, null=True),
+            model_name="transaction",
+            name="sender_username",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=150, null=True
+            ),
         ),
     ]

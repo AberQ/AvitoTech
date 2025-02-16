@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError("Пользователь должен указать имя пользователя.")
-        username = self.model.normalize_username(username)  
+        username = self.model.normalize_username(username)
         extra_fields.setdefault("coins", 1000)
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
@@ -42,21 +42,21 @@ class CustomAbstractUser(AbstractBaseUser, PermissionsMixin):
         "active",
         default=True,
         help_text="Designates whether this user should be treated as active. "
-                  "Unselect this instead of deleting accounts.",
+        "Unselect this instead of deleting accounts.",
     )
     date_joined = models.DateTimeField("date joined", default=timezone.now)
-    coins = models.PositiveIntegerField(default=1000, help_text="User's coin balance.", db_index=True)
+    coins = models.PositiveIntegerField(
+        default=1000, help_text="User's coin balance.", db_index=True
+    )
 
     objects = CustomUserManager()
-    USERNAME_FIELD = "username" 
-    REQUIRED_FIELDS = []  
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = "Авторизационник"
         verbose_name_plural = "Авторизационники"
         abstract = True
-
-
 
 
 class CustomUser(CustomAbstractUser):

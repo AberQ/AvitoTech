@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0005_remove_transaction_merch_name_and_more'),
+        ("api", "0005_remove_transaction_merch_name_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='transaction',
-            old_name='recipient_email',
-            new_name='recipient_username',
+            model_name="transaction",
+            old_name="recipient_email",
+            new_name="recipient_username",
         ),
         migrations.RenameField(
-            model_name='transaction',
-            old_name='sender_email',
-            new_name='sender_username',
+            model_name="transaction",
+            old_name="sender_email",
+            new_name="sender_username",
         ),
     ]

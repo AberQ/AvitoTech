@@ -6,41 +6,44 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0003_transaction'),
+        ("api", "0003_transaction"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='transaction',
-            old_name='created_at',
-            new_name='timestamp',
+            model_name="transaction",
+            old_name="created_at",
+            new_name="timestamp",
         ),
         migrations.RemoveField(
-            model_name='transaction',
-            name='merch',
+            model_name="transaction",
+            name="merch",
         ),
         migrations.RemoveField(
-            model_name='transaction',
-            name='recipient',
+            model_name="transaction",
+            name="recipient",
         ),
         migrations.AddField(
-            model_name='transaction',
-            name='merch_name',
+            model_name="transaction",
+            name="merch_name",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='transaction',
-            name='recipient_email',
+            model_name="transaction",
+            name="recipient_email",
             field=models.EmailField(blank=True, max_length=254, null=True),
         ),
         migrations.AddField(
-            model_name='transaction',
-            name='sender_email',
+            model_name="transaction",
+            name="sender_email",
             field=models.EmailField(blank=True, max_length=254, null=True),
         ),
         migrations.AlterField(
-            model_name='transaction',
-            name='transaction_type',
-            field=models.CharField(choices=[('transfer', 'Transfer'), ('purchase', 'Purchase')], max_length=10),
+            model_name="transaction",
+            name="transaction_type",
+            field=models.CharField(
+                choices=[("transfer", "Transfer"), ("purchase", "Purchase")],
+                max_length=10,
+            ),
         ),
     ]

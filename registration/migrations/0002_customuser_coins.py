@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registration', '0001_initial'),
+        ("registration", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='customuser',
-            name='coins',
-            field=models.PositiveIntegerField(default=1000, help_text="User's coin balance."),
+            model_name="customuser",
+            name="coins",
+            field=models.PositiveIntegerField(
+                default=1000, help_text="User's coin balance."
+            ),
         ),
     ]

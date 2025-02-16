@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "is_staff", "is_active") 
+        fields = ("id", "username", "is_staff", "is_active")
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -16,7 +16,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "password")  
+        fields = ("username", "password")
+
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data["username"], password=validated_data["password"]
@@ -24,10 +25,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-
 class CustomTokenObtainSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token["username"] = user.username  
+        token["username"] = user.username
         return token
