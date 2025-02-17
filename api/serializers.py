@@ -70,7 +70,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("username", "coins", "inventory", "coin_history")
+        fields = ("coins", "inventory", "coin_history")
 
     def get_inventory(self, obj):
 
