@@ -4,7 +4,7 @@ echo "Applying migrations..."
 python manage.py migrate
 
 echo "Starting the server..."
-
+#После -w идет число воркеров, а после --threads число потоков, можно поменять для иной конфигурации ПК, но надо не забыть и поменять команду в dockerfile
 gunicorn -w 23 --threads 1 --bind 0.0.0.0:8080 \
     --log-level=info \
     --access-logfile - \
